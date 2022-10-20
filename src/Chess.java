@@ -94,7 +94,7 @@ public class Chess {
         System.out.println("Thanks for playing!");
     }
 
-    // Homework: Refactor this method to use a single parameter
+    // TODO: Homework - Refactor this method to use a single parameter
     private void movePiece(int fromFileIndex, int fromRankIndex, int toFileIndex, int toRankIndex, String pawnPromotionPiece) {
         Piece fromPiece = board[fromRankIndex][fromFileIndex];
 
