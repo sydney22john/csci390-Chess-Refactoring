@@ -10,22 +10,7 @@ public class Chess {
     boolean playerTurnIsWhite;
 
     public Chess() {
-        board[0][0] = Piece.r;
-        board[0][1] = Piece.n;
-        board[0][2] = Piece.b;
-        board[0][3] = Piece.q;
-        board[0][4] = Piece.k;
-        board[0][5] = Piece.b;
-        board[0][6] = Piece.n;
-        board[0][7] = Piece.r;
-        board[1][0] = Piece.p;
-        board[1][1] = Piece.p;
-        board[1][2] = Piece.p;
-        board[1][3] = Piece.p;
-        board[1][4] = Piece.p;
-        board[1][5] = Piece.p;
-        board[1][6] = Piece.p;
-        board[1][7] = Piece.p;
+        setupBlackPieces();
 
         board[6][0] = Piece.P;
         board[6][1] = Piece.P;
@@ -45,6 +30,25 @@ public class Chess {
         board[7][7] = Piece.R;
 
         playerTurnIsWhite = true;
+    }
+
+    private void setupBlackPieces() {
+        board[0][0] = Piece.r;
+        board[0][1] = Piece.n;
+        board[0][2] = Piece.b;
+        board[0][3] = Piece.q;
+        board[0][4] = Piece.k;
+        board[0][5] = Piece.b;
+        board[0][6] = Piece.n;
+        board[0][7] = Piece.r;
+        board[1][0] = Piece.p;
+        board[1][1] = Piece.p;
+        board[1][2] = Piece.p;
+        board[1][3] = Piece.p;
+        board[1][4] = Piece.p;
+        board[1][5] = Piece.p;
+        board[1][6] = Piece.p;
+        board[1][7] = Piece.p;
     }
 
     public void play() throws IOException {
@@ -71,8 +75,9 @@ public class Chess {
                 continue;
             }
 
-            int fromFileIndex = calcFileIndex(move.charAt(0));
-            int fromRankIndex = calcRankIndex(Integer.valueOf(move.substring(1,2)));
+            Square fromSquare = new Square();
+            fromSquare.setFileIndex(calcFileIndex(move.charAt(0)));
+            fromSquare.setRankIndex(calcRankIndex(Integer.valueOf(move.substring(1,2))));
             boolean capture = (move.charAt(2) == 'x');
             int toFileIndex = calcFileIndex(move.charAt(3));
             int toRankIndex = calcRankIndex(Integer.valueOf(move.substring(4,5)));
@@ -83,9 +88,9 @@ public class Chess {
             }
 
             if(!capture) {
-                movePiece(fromFileIndex, fromRankIndex, toFileIndex, toRankIndex, pawnPromotionPiece);
+                movePiece(fromSquare, toFileIndex, toRankIndex, pawnPromotionPiece);
             } else {
-                capturePiece(fromFileIndex, fromRankIndex, toFileIndex, toRankIndex, pawnPromotionPiece);
+                capturePiece(fromSquare.getFileIndex(), fromSquare.getRankIndex(), toFileIndex, toRankIndex, pawnPromotionPiece);
             }
             // We are not going to worry about special moves like castling and en passant
         }
@@ -94,8 +99,9 @@ public class Chess {
         System.out.println("Thanks for playing!");
     }
 
-    // TODO: Homework - Refactor this method to use a single parameter
-    private void movePiece(int fromFileIndex, int fromRankIndex, int toFileIndex, int toRankIndex, String pawnPromotionPiece) {
+    private void movePiece(Square fromSquare, int toFileIndex, int toRankIndex, String pawnPromotionPiece) {
+        int fromFileIndex = fromSquare.getFileIndex();
+        int fromRankIndex = fromSquare.getRankIndex();
         Piece fromPiece = board[fromRankIndex][fromFileIndex];
 
         if(fromPiece == null) {
@@ -103,18 +109,7 @@ public class Chess {
             return;
         }
 
-        //Check that the piece is owned by the correct player.
-        if(playerTurnIsWhite) {
-            if(fromPiece.toString().toLowerCase() == fromPiece.toString()) {
-                System.out.println("Select a square with a white piece.");
-                return;
-            }
-        } else {
-            if(fromPiece.toString().toUpperCase() == fromPiece.toString()) {
-                System.out.println("Select a square with a black piece.");
-                return;
-            }
-        }
+        if (correctPlayerNotMovingTheirPiece(fromPiece)) return;
 
         //Validate Piece Movement
         if(fromPiece.toString().equalsIgnoreCase("n")) {
@@ -123,45 +118,8 @@ public class Chess {
                 return;
             }
         } else if(fromPiece.toString().equalsIgnoreCase("r")) {
-            if(fromFileIndex == toFileIndex && toRankIndex == fromRankIndex) {
-                System.out.println("Rook must move at least 1 square.");
-                return;
-            } else if(fromFileIndex == toFileIndex) {
-                if(toRankIndex >fromRankIndex) {
-                    for(int i = fromRankIndex+1; i<= toRankIndex; i++) {
-                        if(board[i][fromFileIndex] != null) {
-                            System.out.println("Cannot create valid path for Rook.");
-                            return;
-                        }
-                    }
-                } else {
-                    for(int i = fromRankIndex-1; i>= toRankIndex; i--) {
-                        if(board[i][fromFileIndex] != null) {
-                            System.out.println("Cannot create valid path for Rook.");
-                            return;
-                        }
-                    }
-                }
-            } else if(fromRankIndex == toRankIndex){
-                if(toFileIndex >fromFileIndex) {
-                    for(int i = fromFileIndex+1; i<= toFileIndex; i++) {
-                        if(board[fromRankIndex][i] != null) {
-                            System.out.println("Cannot create valid path for Rook.");
-                            return;
-                        }
-                    }
-                } else {
-                    for(int i=fromFileIndex-1; i>=fromFileIndex; i--) {
-                        if(board[fromRankIndex][i] != null) {
-                            System.out.println("Cannot create valid path for Rook.");
-                            return;
-                        }
-                    }
-                }
-            } else {
-                System.out.println("Cannot create valid path for Rook.");
-                return;
-            }
+            validateRookMove(toFileIndex, toRankIndex, fromFileIndex, fromRankIndex);
+            return;
         } else if(fromPiece.toString().equalsIgnoreCase("b")) {
             if(fromFileIndex == toFileIndex || toRankIndex == fromRankIndex) {
                 System.out.println("Cannot create valid path for Bishop.");
@@ -382,6 +340,66 @@ public class Chess {
         //Change the player's turn
         playerTurnIsWhite = !playerTurnIsWhite;
     }
+
+    private void validateRookMove(int toFileIndex, int toRankIndex, int fromFileIndex, int fromRankIndex) {
+        if(fromFileIndex == toFileIndex && toRankIndex == fromRankIndex) {
+            System.out.println("Rook must move at least 1 square.");
+            return;
+        } else if(fromFileIndex == toFileIndex) {
+            if(toRankIndex > fromRankIndex) {
+                for(int i = fromRankIndex +1; i<= toRankIndex; i++) {
+                    if(board[i][fromFileIndex] != null) {
+                        System.out.println("Cannot create valid path for Rook.");
+                        return;
+                    }
+                }
+            } else {
+                for(int i = fromRankIndex -1; i>= toRankIndex; i--) {
+                    if(board[i][fromFileIndex] != null) {
+                        System.out.println("Cannot create valid path for Rook.");
+                        return;
+                    }
+                }
+            }
+        } else if(fromRankIndex == toRankIndex){
+            if(toFileIndex > fromFileIndex) {
+                for(int i = fromFileIndex +1; i<= toFileIndex; i++) {
+                    if(board[fromRankIndex][i] != null) {
+                        System.out.println("Cannot create valid path for Rook.");
+                        return;
+                    }
+                }
+            } else {
+                for(int i = fromFileIndex -1; i>= fromFileIndex; i--) {
+                    if(board[fromRankIndex][i] != null) {
+                        System.out.println("Cannot create valid path for Rook.");
+                        return;
+                    }
+                }
+            }
+        } else {
+            System.out.println("Cannot create valid path for Rook.");
+            return;
+        }
+    }
+
+    private boolean correctPlayerNotMovingTheirPiece(Piece fromPiece) {
+        //Check that the piece is owned by the correct player.
+        if(playerTurnIsWhite) {
+            if(fromPiece.toString().toLowerCase() == fromPiece.toString()) {
+                System.out.println("Select a square with a white piece.");
+                return true;
+            }
+        } else {
+            if(fromPiece.toString().toUpperCase() == fromPiece.toString()) {
+                System.out.println("Select a square with a black piece.");
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // TODO: Homework - Refactor this method to use a single parameter
 
     private void capturePiece(int fromFileIndex, int fromRankIndex, int toFileIndex, int toRankIndex, String pawnPromotionPiece) {
         Piece fromPiece = board[fromRankIndex][fromFileIndex];
