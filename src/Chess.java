@@ -6,50 +6,13 @@ import java.util.regex.Pattern;
 
 public class Chess {
 
-    Piece[][] board = new Piece[8][8];
+    Board board = new Board();
     boolean playerTurnIsWhite;
 
     public Chess() {
-        setupBlackPieces();
-
-        board[6][0] = Piece.P;
-        board[6][1] = Piece.P;
-        board[6][2] = Piece.P;
-        board[6][3] = Piece.P;
-        board[6][4] = Piece.P;
-        board[6][5] = Piece.P;
-        board[6][6] = Piece.P;
-        board[6][7] = Piece.P;
-        board[7][0] = Piece.R;
-        board[7][1] = Piece.N;
-        board[7][2] = Piece.B;
-        board[7][3] = Piece.Q;
-        board[7][4] = Piece.K;
-        board[7][5] = Piece.B;
-        board[7][6] = Piece.N;
-        board[7][7] = Piece.R;
-
         playerTurnIsWhite = true;
     }
 
-    private void setupBlackPieces() {
-        board[0][0] = Piece.r;
-        board[0][1] = Piece.n;
-        board[0][2] = Piece.b;
-        board[0][3] = Piece.q;
-        board[0][4] = Piece.k;
-        board[0][5] = Piece.b;
-        board[0][6] = Piece.n;
-        board[0][7] = Piece.r;
-        board[1][0] = Piece.p;
-        board[1][1] = Piece.p;
-        board[1][2] = Piece.p;
-        board[1][3] = Piece.p;
-        board[1][4] = Piece.p;
-        board[1][5] = Piece.p;
-        board[1][6] = Piece.p;
-        board[1][7] = Piece.p;
-    }
 
     public void play() throws IOException {
         BufferedReader inputReader = new BufferedReader(new InputStreamReader(System.in));
@@ -102,7 +65,7 @@ public class Chess {
     private void movePiece(Square fromSquare, int toFileIndex, int toRankIndex, String pawnPromotionPiece) {
         int fromFileIndex = fromSquare.getFileIndex();
         int fromRankIndex = fromSquare.getRankIndex();
-        Piece fromPiece = board[fromRankIndex][fromFileIndex];
+        Piece fromPiece = board.getPiece(fromRankIndex, fromFileIndex);
 
         if(fromPiece == null) {
             System.out.println("Select a square with a piece.");
@@ -136,8 +99,8 @@ public class Chess {
         }
 
         //If we have gotten here, that means the move is valid and update the board position
-        board[toRankIndex][toFileIndex] = fromPiece;
-        board[fromRankIndex][fromFileIndex] = null;
+        board.setPiece(fromPiece, toRankIndex, toFileIndex);
+        board.setPiece(null, fromRankIndex, fromFileIndex);
 
         //Change the player's turn
         playerTurnIsWhite = !playerTurnIsWhite;
@@ -150,14 +113,14 @@ public class Chess {
         } else if(fromFileIndex == toFileIndex) {
             if(toRankIndex > fromRankIndex) {
                 for(int i = fromRankIndex +1; i<= toRankIndex; i++) {
-                    if(board[i][fromFileIndex] != null) {
+                    if(board.getPiece(i, fromFileIndex) != null) {
                         System.out.println("Cannot create valid path for Queen.");
                         return;
                     }
                 }
             } else {
                 for(int i = fromRankIndex -1; i>= toRankIndex; i--) {
-                    if(board[i][fromFileIndex] != null) {
+                    if(board.getPiece(i, fromFileIndex) != null) {
                         System.out.println("Cannot create valid path for Queen.");
                         return;
                     }
@@ -166,14 +129,14 @@ public class Chess {
         } else if(fromRankIndex == toRankIndex){
             if(toFileIndex > fromFileIndex) {
                 for(int i = fromFileIndex +1; i<= toFileIndex; i++) {
-                    if(board[fromRankIndex][i] != null) {
+                    if(board.getPiece(fromRankIndex, i) != null) {
                         System.out.println("Cannot create valid path for Queen.");
                         return;
                     }
                 }
             } else {
                 for(int i = fromFileIndex -1; i>= fromFileIndex; i--) {
-                    if(board[fromRankIndex][i] != null) {
+                    if(board.getPiece(fromRankIndex, i) != null) {
                         System.out.println("Cannot create valid path for Queen.");
                         return;
                     }
@@ -185,28 +148,28 @@ public class Chess {
         } else {
             if (fromFileIndex < toFileIndex && fromRankIndex < toRankIndex) {
                 for (int i = 1; i <= toFileIndex - fromFileIndex; i++) {
-                    if (board[fromRankIndex + i][fromFileIndex + i] != null) {
+                    if (board.getPiece(fromRankIndex + i, fromFileIndex + i) != null) {
                         System.out.println("Cannot create valid path for Queen.");
                         return;
                     }
                 }
             } else if (fromFileIndex < toFileIndex && fromRankIndex > toRankIndex) {
                 for (int i = 1; i <= toFileIndex - fromFileIndex; i++) {
-                    if (board[fromRankIndex - i][fromFileIndex + i] != null) {
+                    if (board.getPiece(fromRankIndex - i, fromFileIndex + i) != null) {
                         System.out.println("Cannot create valid path for Queen.");
                         return;
                     }
                 }
             } else if (fromFileIndex > toFileIndex && fromRankIndex > toRankIndex) {
                 for (int i = 1; i <= fromFileIndex - toFileIndex; i++) {
-                    if (board[fromRankIndex - i][fromFileIndex - i] != null) {
+                    if (board.getPiece(fromRankIndex - i, fromFileIndex - i) != null) {
                         System.out.println("Cannot create valid path for Queen.");
                         return;
                     }
                 }
             } else if (fromFileIndex > toFileIndex && fromRankIndex < toRankIndex) {
                 for (int i = 1; i <= fromFileIndex - toFileIndex; i++) {
-                    if (board[fromRankIndex + i][fromFileIndex - i] != null) {
+                    if (board.getPiece(fromRankIndex + i, fromFileIndex - i) != null) {
                         System.out.println("Cannot create valid path for Queen.");
                         return;
                     }
@@ -225,28 +188,28 @@ public class Chess {
         } else {
             if(fromFileIndex < toFileIndex && fromRankIndex < toRankIndex) {
                 for(int i = 1; i <= toFileIndex - fromFileIndex; i++) {
-                    if(board[fromRankIndex +i][fromFileIndex +i] != null) {
+                    if(board.getPiece(fromRankIndex +i, fromFileIndex +i) != null) {
                         System.out.println("Cannot create valid path for Bishop.");
                         return;
                     }
                 }
             } else if(fromFileIndex < toFileIndex && fromRankIndex > toRankIndex) {
                 for(int i = 1; i <= toFileIndex - fromFileIndex; i++) {
-                    if(board[fromRankIndex -i][fromFileIndex +i] != null) {
+                    if(board.getPiece(fromRankIndex -i, fromFileIndex +i) != null) {
                         System.out.println("Cannot create valid path for Bishop.");
                         return;
                     }
                 }
             } else if(fromFileIndex > toFileIndex && fromRankIndex > toRankIndex) {
                 for(int i = 1; i <= fromFileIndex - toFileIndex; i++) {
-                    if(board[fromRankIndex -i][fromFileIndex -i] != null) {
+                    if(board.getPiece(fromRankIndex -i, fromFileIndex -i) != null) {
                         System.out.println("Cannot create valid path for Bishop.");
                         return;
                     }
                 }
             } else if(fromFileIndex > toFileIndex && fromRankIndex < toRankIndex) {
                 for(int i = 1; i <= fromFileIndex - toFileIndex; i++) {
-                    if(board[fromRankIndex +i][fromFileIndex -i] != null) {
+                    if(board.getPiece(fromRankIndex +i, fromFileIndex -i) != null) {
                         System.out.println("Cannot create valid path for Bishop.");
                         return;
                     }
@@ -278,7 +241,7 @@ public class Chess {
         } else if (Math.abs(fromRankIndex - toRankIndex) > 1) {
             System.out.println("Cannot create valid path for King.");
             return true;
-        } else if (board[toRankIndex][toFileIndex] != null) {
+        } else if (board.getPiece(toRankIndex, toFileIndex) != null) {
             System.out.println("Cannot create valid path for King.");
             return true;
         }
@@ -297,12 +260,12 @@ public class Chess {
                     System.out.println("Cannot create valid path for Pawn.");
                     return true;
                 } else if (rankDelta == 1) {
-                    if(board[toRankIndex][toFileIndex] != null) {
+                    if(board.getPiece(toRankIndex, toFileIndex) != null) {
                         System.out.println("Cannot create valid path for Pawn.");
                         return true;
                     }
                 } else if (rankDelta == 2) {
-                    if(board[toRankIndex][toFileIndex] != null || board[toRankIndex -1][toFileIndex] != null) {
+                    if(board.getPiece(toRankIndex, toFileIndex) != null || board.getPiece(toRankIndex -1, toFileIndex) != null) {
                         System.out.println("Cannot create valid path for Pawn.");
                         return true;
                     }
@@ -313,7 +276,7 @@ public class Chess {
                     System.out.println("Cannot create valid path for Pawn.");
                     return true;
                 } else {
-                    if(board[toRankIndex][toFileIndex] != null) {
+                    if(board.getPiece(toRankIndex, toFileIndex) != null) {
                         System.out.println("Cannot create valid path for Pawn.");
                         return true;
                     }
@@ -326,12 +289,12 @@ public class Chess {
                     System.out.println("Cannot create valid path for Pawn.");
                     return true;
                 } else if (rankDelta == -1) {
-                    if(board[toRankIndex][toFileIndex] != null) {
+                    if(board.getPiece(toRankIndex, toFileIndex) != null) {
                         System.out.println("Cannot create valid path for Pawn.");
                         return true;
                     }
                 } else if (rankDelta == -2) {
-                    if(board[toRankIndex][toFileIndex] != null || board[toRankIndex +1][toFileIndex] != null) {
+                    if(board.getPiece(toRankIndex, toFileIndex) != null || board.getPiece(toRankIndex +1, toFileIndex) != null) {
                         System.out.println("Cannot create valid path for Pawn.");
                         return true;
                     }
@@ -342,7 +305,7 @@ public class Chess {
                     System.out.println("Cannot create valid path for Pawn.");
                     return true;
                 } else {
-                    if(board[toRankIndex][toFileIndex] != null) {
+                    if(board.getPiece(toRankIndex, toFileIndex) != null) {
                         System.out.println("Cannot create valid path for Pawn.");
                         return true;
                     }
@@ -384,14 +347,14 @@ public class Chess {
         } else if(fromFileIndex == toFileIndex) {
             if(toRankIndex > fromRankIndex) {
                 for(int i = fromRankIndex +1; i<= toRankIndex; i++) {
-                    if(board[i][fromFileIndex] != null) {
+                    if(board.getPiece(i, fromFileIndex) != null) {
                         System.out.println("Cannot create valid path for Rook.");
                         return;
                     }
                 }
             } else {
                 for(int i = fromRankIndex -1; i>= toRankIndex; i--) {
-                    if(board[i][fromFileIndex] != null) {
+                    if(board.getPiece(i, fromFileIndex) != null) {
                         System.out.println("Cannot create valid path for Rook.");
                         return;
                     }
@@ -400,14 +363,14 @@ public class Chess {
         } else if(fromRankIndex == toRankIndex){
             if(toFileIndex > fromFileIndex) {
                 for(int i = fromFileIndex +1; i<= toFileIndex; i++) {
-                    if(board[fromRankIndex][i] != null) {
+                    if(board.getPiece(fromRankIndex, i) != null) {
                         System.out.println("Cannot create valid path for Rook.");
                         return;
                     }
                 }
             } else {
                 for(int i = fromFileIndex -1; i>= fromFileIndex; i--) {
-                    if(board[fromRankIndex][i] != null) {
+                    if(board.getPiece(fromRankIndex, i) != null) {
                         System.out.println("Cannot create valid path for Rook.");
                         return;
                     }
@@ -438,9 +401,9 @@ public class Chess {
     // TODO: Homework - Refactor this method to use a single parameter
 
     private void capturePiece(int fromFileIndex, int fromRankIndex, int toFileIndex, int toRankIndex, String pawnPromotionPiece) {
-        Piece fromPiece = board[fromRankIndex][fromFileIndex];
+        Piece fromPiece = board.getPiece(fromRankIndex, fromFileIndex);
 
-        Piece wantedLocation = board[toRankIndex][toFileIndex];
+        Piece wantedLocation = board.getPiece(toRankIndex, toFileIndex);
 
         // TODO: Homework - Create capture logic when a piece is capturing another piece
         //           Remember: Pieces can only capture opposing pieces
@@ -451,8 +414,8 @@ public class Chess {
 
 
         //Move piece, if the move is allowed.
-        board[toRankIndex][toFileIndex] = fromPiece;
-        board[fromRankIndex][fromFileIndex] = null;
+        board.setPiece(fromPiece, toRankIndex, toFileIndex);
+        board.setPiece(null, fromRankIndex, fromFileIndex);
     }
 
     private static int calcFileIndex(Character file) {
@@ -519,7 +482,7 @@ public class Chess {
     private void printBoardToConsole() {
         StringBuilder sb = new StringBuilder();
         int rankNum = 8;
-        for (Piece[] rank : board) {
+        for (Piece[] rank : board.getBoard()) {
             sb.append(rankNum + " ");
             for(Piece piece : rank) {
                 if(piece != null) {
