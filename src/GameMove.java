@@ -34,9 +34,9 @@ public class GameMove {
             System.out.println("Move is invalid. Please input a valid move.");
             return false;
         }
-        piece = board.getPiece(calcFileIndex(move.charAt(0)), calcRankIndex(Integer.valueOf(move.substring(1,2))));
+        piece = board.getPiece(calcRankIndex(Integer.valueOf(move.substring(1,2))), calcFileIndex(move.charAt(0)));
 
-        boolean capture = (move.charAt(2) == 'x');
+        capture = (move.charAt(2) == 'x');
 
         toSquare.setFileIndex(calcFileIndex(move.charAt(3)));
         toSquare.setRankIndex(calcRankIndex(Integer.valueOf(move.substring(4,5))));

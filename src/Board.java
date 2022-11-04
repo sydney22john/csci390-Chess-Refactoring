@@ -18,10 +18,6 @@ public class Board {
         return board;
     }
 
-    public void setPiece(GamePiece piece, int rankIndex, int fileIndex) {
-        board[rankIndex][fileIndex] = piece;
-    }
-
     public void setPiece(GamePiece piece, Square square) {
         board[square.getRankIndex()][square.getFileIndex()] = piece;
     }
