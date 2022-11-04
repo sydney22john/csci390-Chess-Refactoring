@@ -66,20 +66,50 @@ public class GameMove {
 
     private static int calcFileIndex(Character file) {
         // Files are associated as follows: a->7, b->6, c->5, d->4, e->3, f->2, g->1, h->0
-        int charValue = file;
-        if (file <= 96 || file >= 105) {
-            throw new IllegalArgumentException("File Character '" + file + "' is invalid.");
+        switch(file) {
+            case 'a' :
+                return 0;
+            case 'b' :
+                return 1;
+            case 'c' :
+                return 2;
+            case 'd' :
+                return 3;
+            case 'e' :
+                return 4;
+            case 'f' :
+                return 5;
+            case 'g' :
+                return 6;
+            case 'h' :
+                return 7;
+            default :
+                throw new IllegalArgumentException("File Character '" + file + "' is invalid.");
         }
-        // calc file index with this formula
-        return Math.abs(97 - file);
     }
 
     private static int calcRankIndex(int rankNumber) {
         // Ranks are associated as follows: 1->7, 2->6, 3->5, 4->4, 5->3, 6->2, 7->1, 8->0
-        if (rankNumber <= 0 || rankNumber >= 9) {
-            throw new IllegalArgumentException("Rank Value '" + rankNumber + "' is invalid.");
+        switch(rankNumber) {
+            case 1 :
+                return 7;
+            case 2 :
+                return 6;
+            case 3 :
+                return 5;
+            case 4 :
+                return 4;
+            case 5 :
+                return 3;
+            case 6 :
+                return 2;
+            case 7 :
+                return 1;
+            case 8 :
+                return 0;
+            default:
+                throw new IllegalArgumentException("Rank Value '" + rankNumber + "' is invalid.");
+
         }
-        // We can calculate rank with this formula
-        return 8 - rankNumber;
     }
 }
