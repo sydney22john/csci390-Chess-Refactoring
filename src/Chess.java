@@ -43,7 +43,12 @@ public class Chess {
         if (correctPlayerNotMovingTheirPiece(fromPiece)) return;
 
         // move the piece
-        fromPiece.move(board, gameMove.getToSquare());
+        if (gameMove.getPawnPromotionPiece() == null) {
+            fromPiece.move(board, gameMove.getToSquare());
+        }
+        else {
+            ((Pawn) fromPiece).pawnMove(board, gameMove.getToSquare(), gameMove.getPawnPromotionPiece(), playerTurnIsWhite);
+        }
 
         //Change the player's turn
         playerTurnIsWhite = !playerTurnIsWhite;
@@ -78,7 +83,12 @@ public class Chess {
         if (correctPlayerNotMovingTheirPiece(fromPiece)) return;
 
         // move the piece
-        fromPiece.capture(board, gameMove.getToSquare());
+        if (gameMove.getPawnPromotionPiece() == null) {
+            fromPiece.capture(board, gameMove.getToSquare());
+        }
+        else {
+            ((Pawn) fromPiece).pawnCapture(board, gameMove.getToSquare(), gameMove.getPawnPromotionPiece(), playerTurnIsWhite);
+        }
 
         //Change the player's turn
         playerTurnIsWhite = !playerTurnIsWhite;

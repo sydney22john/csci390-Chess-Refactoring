@@ -5,6 +5,7 @@ public class Pawn extends GamePiece implements Moves {
         this.pieceType = Piece.P;
     }
 
+
     @Override
     public void move(Board board, Square toSquare) {
         if (isValidMove(board, toSquare)) {
@@ -89,28 +90,59 @@ public class Pawn extends GamePiece implements Moves {
         return true;
     }
 
-//    private GamePiece promotePawn(int toRankIndex, String pawnPromotionPiece, GamePiece fromPiece) {
-//        if(playerTurnIsWhite && toRankIndex == 0) {
-//            if(pawnPromotionPiece == null) {
-//                System.out.println("Pawn Promotion Piece must be specified for this pawn move.");
-//                return null;
-//            }
-//            if(!pawnPromotionPiece.toUpperCase().equals(pawnPromotionPiece)) {
-//                System.out.println("Pawn Promotion Piece must be for White. Input should be uppercase.");
-//                return null;
-//            }
-//            fromPiece = Piece.valueOf(pawnPromotionPiece);
-//        } else if(!playerTurnIsWhite && toRankIndex == 7) {
-//            if(pawnPromotionPiece == null) {
-//                System.out.println("Pawn Promotion Piece must be specified for this pawn move.");
-//                return null;
-//            }
-//            if(!pawnPromotionPiece.toLowerCase().equals(pawnPromotionPiece)) {
-//                System.out.println("Pawn Promotion Piece must be for Black. Input should be lowercase.");
-//                return null;
-//            }
-//            fromPiece = Piece.valueOf(pawnPromotionPiece);
-//        }
-//        return fromPiece;
-//    }
+    public void pawnMove(Board board, Square toSquare, String pawnPromotionPiece, boolean playerTurnIsWhite) {
+        this.move(board, toSquare);
+        GamePiece promotion = this.promotePawn(board, toSquare, pawnPromotionPiece, playerTurnIsWhite);
+        if (promotion != null) {
+            board.setPiece(promotion, promotion.fromSquare);
+        }
+    }
+
+    public void pawnCapture(Board board, Square toSquare, String pawnPromotionPiece, boolean playerTurnIsWhite) {
+        this.capture(board, toSquare);
+        GamePiece promotion = this.promotePawn(board, toSquare, pawnPromotionPiece, playerTurnIsWhite);
+        if (promotion != null) {
+            board.setPiece(promotion, promotion.fromSquare);
+        }
+    }
+
+    private GamePiece promotePawn(Board board, Square toSquare, String pawnPromotionPiece, boolean playerTurnIsWhite) {
+        GamePiece fromPiece = null;
+        if(playerTurnIsWhite && toSquare.getRankIndex() == 0) {
+            if(pawnPromotionPiece == null) {
+                System.out.println("Pawn Promotion Piece must be specified for this pawn move.");
+                return null;
+            }
+            if(!pawnPromotionPiece.toUpperCase().equals(pawnPromotionPiece)) {
+                System.out.println("Pawn Promotion Piece must be for White. Input should be uppercase.");
+                return null;
+            }
+            fromPiece = getPromotionPiece(Piece.valueOf(pawnPromotionPiece));
+        } else if(!playerTurnIsWhite && toSquare.getRankIndex() == 7) {
+            if(pawnPromotionPiece == null) {
+                System.out.println("Pawn Promotion Piece must be specified for this pawn move.");
+                return null;
+            }
+            if(!pawnPromotionPiece.toLowerCase().equals(pawnPromotionPiece)) {
+                System.out.println("Pawn Promotion Piece must be for Black. Input should be lowercase.");
+                return null;
+            }
+            fromPiece = getPromotionPiece(Piece.valueOf(pawnPromotionPiece));
+        }
+        return fromPiece;
+    }
+
+    private GamePiece getPromotionPiece(Piece pieceType) {
+        switch(pieceType) {
+            case B:
+                return new Bishop(this.whitePiece, this.fromSquare);
+            case Q:
+                return new Queen(this.whitePiece, this.fromSquare);
+            case R:
+                return new Rook(this.whitePiece, this.fromSquare);
+            case N:
+                return new Knight(this.whitePiece, this.fromSquare);
+        }
+        return null;
+    }
 }

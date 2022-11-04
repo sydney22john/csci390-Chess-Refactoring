@@ -1,6 +1,7 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -43,7 +44,7 @@ public class GameMove {
 
         pawnPromotionPiece = null;
         if(move.length() == 6) {
-            pawnPromotionPiece = move.substring(5,6);
+            pawnPromotionPiece = move.substring(5,6).toUpperCase();
         }
         return true;
     }
