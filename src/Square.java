@@ -2,6 +2,11 @@ public class Square {
     private int rankIndex;
     private int fileIndex;
 
+    public Square(int rankIndex, int fileIndex) {
+        this.rankIndex = rankIndex;
+        this.fileIndex = fileIndex;
+    }
+
     public int getRankIndex() {
         return rankIndex;
     }

@@ -1,8 +1,7 @@
-public class Pawn extends GamePiece implements Moves {
-
-    public Pawn(boolean whitePiece, Square fromSquare) {
+public class Rook extends GamePiece {
+    public Rook(boolean whitePiece, Square fromSquare) {
         super(whitePiece, fromSquare);
-        this.pieceType = Piece.P;
+        this.pieceType = Piece.R;
     }
 
     @Override
