@@ -5,12 +5,17 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class GameMove {
-    private BufferedReader inputReader = new BufferedReader(new InputStreamReader(System.in));
+    private BufferedReader inputReader;
     private GamePiece piece;
     private Square toSquare;
     private boolean capture;
     private String pawnPromotionPiece;
 
+    public GameMove() {
+       inputReader = new BufferedReader(new InputStreamReader(System.in));
+       toSquare = new Square();
+       piece = new GamePiece();
+    }
 
     public boolean getMove(Board board) throws IOException {
         // We'll be doing a simpler notation for our chess game. Notation will be a 5 or 6 character length. Form

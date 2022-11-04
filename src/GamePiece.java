@@ -3,6 +3,18 @@ public class GamePiece implements Moves {
     protected Square fromSquare;
     protected boolean whitePiece;
 
+    @Override
+    public String toString() {
+        if (this.whitePiece) {
+            return this.pieceType.toString().toUpperCase();
+        }
+        else {
+            return this.pieceType.toString().toLowerCase();
+        }
+    }
+
+    public GamePiece() {}
+
     public GamePiece(boolean whitePiece, Square fromSquare) {
         this.fromSquare = fromSquare;
         this.whitePiece = whitePiece;

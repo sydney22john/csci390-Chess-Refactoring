@@ -7,6 +7,8 @@ public class Square {
         this.fileIndex = fileIndex;
     }
 
+    public Square() {}
+
     public int getRankIndex() {
         return rankIndex;
     }

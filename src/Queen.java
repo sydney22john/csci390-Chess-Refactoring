@@ -20,6 +20,18 @@ public class Queen extends GamePiece {
     @Override
     public void capture(Board board, Square toSquare) {
 
+        if (isValidMove(board, toSquare)) {
+            GamePiece capturedPiece = board.getPiece(toSquare);
+            if(capturedPiece.isWhitePiece() != this.isWhitePiece()) {
+                // swapping the piece location and updating current location
+                board.setPiece(null, this.fromSquare);
+                board.setPiece(this, toSquare);
+                this.fromSquare = toSquare;
+            }
+        }
+        else {
+            System.out.println("Cannot create valid path for Queen.");
+        }
     }
 
     @Override

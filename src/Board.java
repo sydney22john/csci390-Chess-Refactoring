@@ -10,6 +10,10 @@ public class Board {
         return board[rankIndex][fileIndex];
     }
 
+    public GamePiece getPiece(Square square) {
+        return board[square.getRankIndex()][square.getFileIndex()];
+    }
+
     public GamePiece[][] getBoard() {
         return board;
     }
@@ -55,13 +59,13 @@ public class Board {
         board[6][5] = new Pawn(true, new Square(6, 5));
         board[6][6] = new Pawn(true, new Square(6, 6));
         board[6][7] = new Pawn(true, new Square(6, 7));
-        board[7][0] = new Knight(true, new Square(7, 0));
+        board[7][0] = new Rook(true, new Square(7, 0));
         board[7][1] = new Knight(true, new Square(7, 1));
         board[7][2] = new Bishop(true, new Square(7, 2));
         board[7][3] = new Queen(true, new Square(7, 3));
         board[7][4] = new King(true, new Square(7, 4));
         board[7][5] = new Bishop(true, new Square(7, 5));
         board[7][6] = new Knight(true, new Square(7, 6));
-        board[7][7] = new Knight(true, new Square(7, 7));
+        board[7][7] = new Rook(true, new Square(7, 7));
     }
 }
